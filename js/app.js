@@ -30,7 +30,12 @@
     },
     initEvents: function() {
       jQuery('.save-settings').bind('click', this.changeSettings.bind(this));
+      jQuery('.cancel').bind('click', this.closeModal.bind(this));
       jQuery('.settings').bind('click', this.openModal.bind(this));
+    },
+    closeModal: function() {
+      jQuery('.modal').modal('hide');
+      this.universe.resume();
     },
     openModal: function() {
       jQuery('.modal').modal('show');

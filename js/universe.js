@@ -5,6 +5,7 @@
     var row = options.row * 1;
     var col = options.col * 1;
     this.intervalId;
+    this.options = options;
     this.arr  = new Randomizer(row, col, options.density * 1);
     this.grid = new Grid('canvas', row, col);
     this.startGame(options.interval * 1);
@@ -19,6 +20,9 @@
     },
     pause : function() {
       clearInterval(this.intervalId);
+    },
+    resume : function() {
+      this.startGame(this.options.interval);
     },
     refresh : function() {
       this.grid.refresh();
