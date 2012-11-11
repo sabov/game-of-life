@@ -2,17 +2,24 @@
 
 //Universe
   var Universe = function(row, col) {
-    this.arr  = new Randomizer(row, col);
+    this.config = App.getConfig();
+    var row = this.config.row;
+    var col = this.config.col;
+    this.arr  = new Randomizer(row, col, this.config.density);
     this.grid = new Grid('canvas', row, col);
-    this.refresh();
-    this.arr.debug()
-    console.log('Next Step');
-    this.arr = this.nextStep();
-    this.refresh();
-    this.arr.debug()
+    this.startGame(this.config.interval);
   }
   Universe.prototype = {
+    startGame : function(interval) {
+      this.refresh();
+      /*setInterval(function() {
+        this.grid.clearCanvas();
+        this.arr = this.nextStep();
+        this.refresh();
+      }.bind(this), interval);*/
+    },
     refresh : function() {
+      this.grid.refresh();
       this.arr.each(function(el, i, j, origArr) {
         if(el()) this.grid.drawCell(i, j);
       }.bind(this));
@@ -49,50 +56,63 @@
   var Grid = function(canvas, row, col) {
     this.canvas = document.getElementById(canvas);
     this.ctx    = this.canvas.getContext("2d");
+    this.offset = 0;
     this.setSize(row, col);
-    this.refresh();
   }
   Grid.prototype = {
     setSize : function(row, col) {
       this.row = row;
       this.col = col;
+      this.canvas.width  = innerWidth;
+      this.canvas.height = innerHeight;
+      this.colWidth  = (this.canvas.width/this.col);
+      this.rowHeight = (this.canvas.height/this.row);
+      this.width  = col * this.colWidth;
+      this.height = row * this.rowHeight;
+      this.setPadding();
+    },
+    setPadding : function() {
+      var leftPadding  = (this.canvas.width - this.width)/2;
+      var topPadding = (this.canvas.height - this.height)/2;
+      this.canvas.style.paddingLeft = leftPadding + 'px';
+      this.canvas.style.paddingTop = topPadding + 'px';
     },
     refresh : function() {
-      this.width  = this.canvas.width  = innerWidth;
-      this.height = this.canvas.height = innerHeight;
-      this.colWidth  = Math.round(this.width/this.col);
-      this.rowHeight = Math.round(this.height/this.row);
+      this.clearCanvas();
       this.drawGrid(this.row, this.col);
+    },
+    clearCanvas : function() {
+      this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     },
     drawGrid : function(row, col) {
       this.ctx.lineWidth = 0.2;
-      this.ctx.strokeStyle = "black";
-      var gridWidth  = col * this.colWidth;
-      var gridHeight = row * this.rowHeight;
+      this.ctx.strokeStyle = "#CCCCCC";
+      var offset = this.offset;
 
-      for (var px = 0; px <= gridWidth; px += this.colWidth) {
-        this.ctx.moveTo(0.5 + px, 0);
-        this.ctx.lineTo(0.5 + px, gridHeight);
+      for (var px = 0; px <= this.width; px += this.colWidth) {
+        this.ctx.moveTo(offset + px, 0);
+        this.ctx.lineTo(offset + px, this.height);
       }
-      for (var px = 0; px <= gridHeight; px += this.rowHeight) {
-        this.ctx.moveTo(0, 0.5 + px);
-        this.ctx.lineTo(gridWidth, 0.5 + px);
+      for (var px = 0; px <= this.height; px += this.rowHeight) {
+        this.ctx.moveTo(0, offset + px);
+        this.ctx.lineTo(this.width, offset + px);
       }
       this.ctx.stroke();
     },
     drawCell : function(row, col) {
+      var offset = this.offset;
       var y1 = row * this.rowHeight;
       var x1 = col * this.colWidth;
-      this.ctx.fillStyle="#999999";
-      this.ctx.fillRect(x1, y1, this.colWidth, this.rowHeight);
+      this.ctx.fillStyle="#BBBBBB";
+      this.ctx.fillRect(x1 + offset, y1 + offset, this.colWidth - offset, this.rowHeight - offset);
     }
   }
 
 //Geting random input for universe
-  var Randomizer = function(row, col) {
+  var Randomizer = function(row, col, density) {
     var arr = new TdArray(row, col);
     arr.each(function(el, i, j, arr) {
-      var r = Math.floor(Math.random()*7);
+      var r = Math.floor(Math.random()*Math.sqrt(row*col)*density/100);
       el(r == 0? true : false);
     });
     return arr;
@@ -157,8 +177,9 @@
     }
   };
 
+
   bindReady(function(){
-    new Universe(5, 5);
+    new Universe(100, 100);
   });
 
 })();

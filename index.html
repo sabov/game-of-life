@@ -3,11 +3,53 @@
     <head>
         <title>Game Of LIfe</title>
         <link href="style.css" rel="stylesheet">
+        <script type="text/javascript" src="config.js"></script>
         <script type="text/javascript" src="app.js"></script>
         <meta http-equiv="content-type" content="text/html; charset=UTF-8">
     </head>
     <body>
         <canvas id="canvas"></canvas>
+        <a class="settings"></a>
+        <div class="modal fade in">
+          <div class="modal-header">
+            <a class="close">&times;</a>
+            <h3>Settings</h3>
+          </div>
+          <div class="modal-body">
+            <div class="control-group">
+              <label class="label">number of columns</label>
+              <div class="control">
+                <input type="text" class="text" />
+                <span class="help-inline">From 3 to 100</span>
+              </div>
+            </div>
+            <div class="control-group">
+              <label class="label">number of  rows</label>
+              <div class="control">
+                <input type="text" class="text" />
+                <span class="help-inline">From 3 to 100</span>
+              </div>
+            </div>
+            <div class="control-group">
+              <label class="label">Interval</label>
+              <div class="control">
+                <input type="text" class="text" />
+                <span class="help-inline">From 500</span>
+              </div>
+            </div>
+            <div class="control-group">
+              <label class="label">cell density</label>
+              <div class="control">
+                <input type="text" class="text" />
+                <span class="help-inline">From 1 to 100</span>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn">Close</button>
+            <button class="btn btn-primary">Save changes</button>
+          </div>
+        </div>
     </body>
 </html>
 
