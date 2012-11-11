@@ -41,11 +41,16 @@
     checkNeighbors : function(arr) {
       var count = 0;
       var result = false;
+      var live   = false;
       arr.each(function(el, i, j) {
-        if(i == 1 && j == 1) return;
-        if(el()) count++;
+        if(el()) {
+          count++;
+          if(i == 1 && j == 1) {
+            live = true;
+          }
+        }
       });
-      if(count > 1 && count < 4) result = true;
+      if(count == 3 || (count == 4 && live)) result = true;
       return result;
     },
     getSubArr : function(i, j) {
@@ -117,7 +122,7 @@
   var Randomizer = function(row, col, density) {
     var arr = new TdArray(row, col);
     arr.each(function(el, i, j, arr) {
-      var r = Math.floor(Math.random()*Math.sqrt(row*col)/(density/10));
+      var r = Math.floor(Math.random()*Math.sqrt(row*col)/(density/2));
       el(r == 0? true : false);
     });
     return arr;
