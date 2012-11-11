@@ -42,9 +42,10 @@
       this.universe.pause();
     },
     changeSettings: function() {
-      this.bindings.getValues();
-      this.universe = new App.Universe(this.bindings.data);
-      jQuery('.modal').modal('hide');
+      if(this.bindings.getValues()) {
+        jQuery('.modal').modal('hide');
+        this.universe = new App.Universe(this.bindings.data);
+      }
     }
   }
 
