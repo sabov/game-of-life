@@ -2,20 +2,23 @@
 
 //Universe
   App.Universe = function(options) {
-    var row = options.row;
-    var col = options.col;
-    this.arr  = new Randomizer(row, col, options.density);
+    var row = options.row * 1;
+    var col = options.col * 1;
+    this.intervalId;
+    this.arr  = new Randomizer(row, col, options.density * 1);
     this.grid = new Grid('canvas', row, col);
-    this.startGame(options.interval);
+    this.startGame(options.interval * 1);
   }
   App.Universe.prototype = {
     startGame : function(interval) {
       this.refresh();
-      /*setInterval(function() {
-        this.grid.clearCanvas();
+      this.intervalId = setInterval(function() {
         this.arr = this.nextStep();
         this.refresh();
-      }.bind(this), interval);*/
+      }.bind(this), interval);
+    },
+    pause : function() {
+      clearInterval(this.intervalId);
     },
     refresh : function() {
       this.grid.refresh();
@@ -57,6 +60,10 @@
     this.ctx    = this.canvas.getContext("2d");
     this.offset = 0;
     this.setSize(row, col);
+    this.needRefresh = false;
+    jQuery(window).bind('resize', function() {
+      this.needRefresh = true;
+    }.bind(this));
   }
   Grid.prototype = {
     setSize : function(row, col) {
@@ -68,16 +75,11 @@
       this.rowHeight = (this.canvas.height/this.row);
       this.width  = col * this.colWidth;
       this.height = row * this.rowHeight;
-      this.setPadding();
-    },
-    setPadding : function() {
-      var leftPadding  = (this.canvas.width - this.width)/2;
-      var topPadding = (this.canvas.height - this.height)/2;
-      this.canvas.style.paddingLeft = leftPadding + 'px';
-      this.canvas.style.paddingTop = topPadding + 'px';
+      this.needRefresh = false;
     },
     refresh : function() {
       this.clearCanvas();
+      if(this.needRefresh) this.setSize(this.row, this.col);
       this.drawGrid(this.row, this.col);
     },
     clearCanvas : function() {
@@ -111,7 +113,7 @@
   var Randomizer = function(row, col, density) {
     var arr = new TdArray(row, col);
     arr.each(function(el, i, j, arr) {
-      var r = Math.floor(Math.random()*Math.sqrt(row*col)*density/100);
+      var r = Math.floor(Math.random()*Math.sqrt(row*col)/(density/10));
       el(r == 0? true : false);
     });
     return arr;

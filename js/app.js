@@ -4,33 +4,42 @@
     init: function() {
       this.config   = App.getConfig();
       this.universe = new App.Universe(this.config);
-      new Binding([
+      this.bindings = new Binding([
         {
           name: 'col',
           selector: 'input[name=columns]',
-          rate: [3, 100]
+          range: [3, 101]
         },
         {
           name: 'row',
           selector: 'input[name=rows]',
-          rate: [3, 100]
+          range: [3, 101]
         },
         {
           name: 'interval',
           selector: 'input[name=interval]',
-          rate: [500]
+          range: [500]
         },
         {
           name: 'density',
           selector: 'input[name=desity]',
-          rate: [1, 100]
+          range: [1, 100]
         }
       ], this.config);
+      this.initEvents();
     },
     initEvents: function() {
-      jQuery('.save-settings').bind('click', changeSettings.bind(this));
+      jQuery('.save-settings').bind('click', this.changeSettings.bind(this));
+      jQuery('.settings').bind('click', this.openModal.bind(this));
+    },
+    openModal: function() {
+      jQuery('.modal').modal('show');
+      this.universe.pause();
     },
     changeSettings: function() {
+      this.bindings.getValues();
+      this.universe = new App.Universe(this.bindings.data);
+      jQuery('.modal').modal('hide');
     }
   }
 
@@ -41,8 +50,8 @@
   }
   Binding.prototype = {
     getValues: function() {
+      var success = true;
       this.bindigs.forEach(function(el) {
-        var success = true;
         var input = jQuery(el['selector']);
         if(this.validate(el)) {
           this.data[el.name] = input.val();
@@ -57,7 +66,6 @@
     setData: function() {
       this.bindigs.forEach(function(el) {
         var input = jQuery(el['selector']);
-        console.log(input);
         if(this.data[el.name]) {
           input.val(this.data[el.name]);
         }
