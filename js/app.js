@@ -1,5 +1,6 @@
 (function() {
 
+
   var Game = {
     init: function() {
       this.config   = App.getConfig();
